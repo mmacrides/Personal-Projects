@@ -1,0 +1,54 @@
+Load in Libraries
+```{r}
+library(ggplot2)
+library(syuzhet)
+library(magrittr)
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(tidytext)
+library(textdata)
+library(stringr)
+library(fuzzyjoin)
+library(textstem)
+```
+
+Set Working Directory
+```{r}
+setwd('/')
+getwd()
+```
+
+Read file and store first n records
+```{r}
+df <- read.csv('.csv')
+```
+
+---------------------Sentiment Analysis-----------------------------------------------------------------------------------------------------------
+```{r}
+review <- as.character(df$Review_Text)
+```
+
+```{r}
+sentiments <- get_nrc_sentiment(review)
+```
+
+```{r}
+df_sentiments <- cbind(df,sentiments)
+names(df)[names(df) == 'df$Review_Text'] <- 'Review_Text'
+```
+
+```{r}
+barplot(colSums(sentiments), col= rainbow(10), ylab= 'Count', main = 'Sentiment Scores for Disneyland Reviews')
+```
+
+Clean columns
+```{r}
+df_sentiments <- df_sentiments %>%
+  janitor::clean_names(case = "title")
+```
+
+Write to csv file
+```{r}
+data.table::fwrite(df_sentiments, file = ".csv")
+```
