@@ -22,7 +22,7 @@ library(textstem)
 
 Set/Get Working Directory
 ```{r}
-setwd('/')
+#setwd('/Users/matthewmacrides/Python and R/GitHub/Text Mining"')
 getwd()
 ```
 
