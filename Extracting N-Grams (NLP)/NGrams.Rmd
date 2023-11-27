@@ -1,0 +1,163 @@
+---
+title: "Text Mining"
+author: "Matt Macrides"
+date: "4/11/2023"
+output: html_document
+---
+
+Load in Libraries
+```{r}
+library(ggplot2)
+library(syuzhet)
+library(magrittr)
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(tidytext)
+library(textdata)
+library(stringr)
+library(fuzzyjoin)
+library(textstem)
+```
+
+Set/Get Working Directory
+```{r}
+#setwd('/Users/matthewmacrides/Python and R/GitHub/Text Mining"')
+getwd()
+```
+
+Read files, bind them together, and clean up columns
+```{r}
+df <- read.csv('.csv')
+df <- df %>%
+  janitor::clean_names(case = "title")
+```
+
+Let's create a histogram to see the distribution of Scores
+```{r}
+hist(df$Score, col = 'skyblue')
+```
+
+------------------------Clean Comments------------------------------------------------------------------------------------------------------------------
+```{r}
+df <- df %>% 
+  mutate(comment_clean = gsub("[^a-zA-Z .?!-/]","",Utterance), # remove all non alpha characters and some bonus stuff
+         comment_clean = gsub("\\'s","s", comment_clean, ignore.case = TRUE), # for 's words like supervisor's
+         comment_clean = gsub("\\.|\\,"," ", comment_clean)) # For when people accidentally didn't put a space after a sentence
+```
+
+Unclean vs. Clean Comments
+```{r}
+df %>% filter(str_detect(Utterance, "'s|[^a-zA-Z .?!-/]")) %>% 
+  sample_n(5) %>% 
+  select(Utterance, comment_clean)
+```
+
+Unnest Comments (1 row per word)
+```{r}
+df_words <- df %>% 
+  unnest_tokens(word, comment_clean)
+```
+
+Load misspelling data. giving an Example, and ensuring each mispelling maps to one correct word
+Left join the misspelling dataframe when (df$word == misspellings$misspelling)
+and Examples of Misspellings in our data
+```{r}
+data(misspellings)
+##misspellings %>% filter(misspelling=="managable")
+misspellings <- misspellings %>% distinct(misspelling, .keep_all=TRUE)
+misspellings[ , 'Misspelled'] <- 'Yes'
+
+df_words <- df_words %>% 
+  left_join(misspellings, by = c("word"="misspelling"))
+
+df_words$Misspelled[is.na(df_words$correct)] <- 'No'
+
+df_words %>% filter(!is.na(correct)) %>% sample_n(100) %>% select(word, correct)
+```
+
+Fix the misspellings and lematize the words. New cleaned column is 'Word_Stem'. Exmaples of lematized words as follows
+```{r}
+df_words <- df_words %>%
+  mutate(word = if_else(complete.cases(correct), correct, word),
+         word_stem = lemmatize_words(word, dictionary = lexicon::hash_lemmas)) %>%
+  select(-correct)
+
+df_words %>% filter(word_stem %in% c("be", "share", "opportunity", "ability")) %>% 
+  count(word_stem, word)
+```
+
+1. Manually editing Stems we didn't like
+2. Removing general stop_words and our stop words
+```{r}
+df_words <- df_words %>%
+  mutate(word_stem = case_when(word_stem == 'flexibility'~'flexible',
+                               word_stem == 'manager'~"supervisor",
+                               str_detect(word_stem, "covid|corona|pandemic") ~ "pandemic",
+                               TRUE~word_stem))
+
+OurStopwords <- c("progressive","job","company", "lot",
+                  "feel","like", "it","seem","like",
+                  "thing","one", "we", "employee", "day", "it", "do", "na",
+                   "i'm", "a", "allot", "lot", "he", "hes", "she", "shes")
+
+df_words <- df_words %>%
+  filter(!(word_stem %in% OurStopwords),
+         !(word_stem %in% stop_words$word))
+```
+
+Left join the get_sentiments dataframe when (df$word_stem == get_sentiments$word) and examples of words with their sentiments
+```{r}
+df_words <- df_words %>%
+  left_join(get_sentiments("afinn"), by = c("word_stem"="word"))
+
+df_words$value[is.na(df_words$value)] <- 0
+
+get_sentiments("afinn") %>% sample_n(10)
+print(df_words)
+```
+
+Delete duplicate word stems within a comment and capitalize words
+```{r}
+df_words <- df_words %>%
+  distinct(Visitid, word_stem, .keep_all = T)
+
+df_words$word_stem <- sub("(.)", ("\\U\\1"), tolower(df_words$word_stem), pe=TRUE)
+```
+
+Renest clean data by ID into a sentence again
+```{r}
+df <- df_words %>% select(-word, -value) %>%
+  nest(data = word_stem)
+
+# recreate the comment
+words <- map(df$data, unlist) %>%
+  sapply(., function(x) paste(unlist(x),collapse = " "))
+
+# bind them back together
+df <- as_tibble(cbind(df %>% select(-data),
+                               words)) %>%
+  mutate(words=as.character(words))
+```
+
+I want to see the frequncies of specific word stems (especially for error and bot frustration intents) so I can match words with a better Intent.
+I need to create n-grams in order to do this
+```{r}
+df_bigrams <- df %>%
+  unnest_tokens(word_stem, words, token = "ngrams", n = 2)
+
+df_trigrams <- df %>%
+  unnest_tokens(word_stem, words, token = "ngrams", n = 3)
+
+df_output <- bind_rows("Single Word"= df_words,
+                       "Bigram" = df_bigrams,
+                       "Trigram" = df_trigrams,
+                       .id = "Token Type") %>%
+  filter(complete.cases(word_stem))
+```
+
+Write to csv file
+```{r}
+data.table::fwrite(df_output, file = "ngramdata.csv")
+data.table::fwrite(df, file = "rawdata.csv")
+```

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Book Recommendation System - Results</title>
+    {{ script|safe }}  <!-- Include the script block here -->
+    <style>
+        /* Add any additional styling as needed */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .header a {
+            color: #fff; /* Set the link color to white */
+            text-decoration: underline; /* Add underline to the link */
+        }
+
+        h1 {
+            text-align: center;
+            /*background-color: #007BFF; /* Add background color to the title */
+            /*color: #fff; /* Set text color to white */
+            padding: 10px; /* Add padding to the title */
+            border-radius: 5px; /* Optional: Add rounded corners to the title */
+            box-shadow: 0 0 10px rgba(2, 2, 255, 0.22); /* Optional: Add a subtle box shadow */
+            margin-left: 300px;
+            margin-right: 300px;
+        }
+
+        .email-section {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .email-input {
+            margin-right: 10px;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            margin-left: 300px;
+            margin-right: 300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border: 1px solid #ccc; /* Border style, adjust color as needed */
+            border-radius: 5px; /* Optional: Add rounded corners */
+            padding: 10px; /* Optional: Add padding inside the border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle box shadow */
+        }
+
+        .details-section {
+            display: none;
+            padding-right: 100px; /* Add padding to the right */
+        }
+
+        .details-button {
+            cursor: pointer;
+            color: #007BFF;
+            text-decoration: underline;
+        }
+
+        .result-item p {
+            margin-left: 20px;
+            margin-right: 10px; /* Adjust the right margin as needed */
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        /* Alternate background colors */
+        .result-item:nth-child(odd) {
+            background-color: #ddd; /* You can choose any color you prefer */
+        }
+
+        /* Increase font size for the book and author line */
+        .result-item p strong {
+            font-size: 16px;
+        }
+
+        /* Center the Similarity Score */
+        .similarity-score {
+            text-align: center;
+            padding-right: 100px;
+            min-width: 100px; /* Adjust the minimum width as needed */
+        }
+
+        /* Progress bar styles */
+        .progress-bar {
+            width: 100%;
+            background-color: #eee;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+            border: 1px solid #000; /* Black border around the progress bar */
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #007BFF;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/">Home</a>
+    </div>
+
+    <h1>Top 10 Similar Books</h1>
+
+    <!-- Email Section -->
+    <div class="email-section">
+    <label for="email" class="email-input">Send Results to Email:</label>
+    <input type="text" id="email" name="email">
+    <input type="submit" value="Submit" onclick="sendEmail(); document.getElementById('email').value = '';">
+</div>
+    <script>
+        function toggleDetails(button) {
+            const detailsSection = button.nextElementSibling;
+            detailsSection.style.display = detailsSection.style.display === 'none' ? 'block' : 'none';
+            button.textContent = detailsSection.style.display === 'none' ? 'Details ▼' : 'Details ▲';
+        }
+    
+        function sendEmail(email) {
+            console.log('Sending email to:', email)
+            email = document.getElementById('email').value;
+            
+            book_data = [];
+            const resultItems = document.querySelectorAll('.result-item');
+
+            resultItems.forEach((resultItem, index) => {
+                const title = resultItem.querySelector('p strong').textContent;
+                const author = resultItem.querySelector('p:nth-child(2)').textContent.split('by ')[1];
+                // Simplify how we retrieve the score
+                const scoreElement = resultItem.querySelector('.similarity-score p:last-child');
+                const scoreString = scoreElement ? scoreElement.textContent.trim() : '0%';
+
+                // Convert the score string to a numerical value
+                const score = parseFloat(scoreString.replace('%', ''));
+                // Convert 'Avg_Rating' and 'Num_Ratings' to numerical values
+                const ratingInfoElement = resultItem.querySelector('.result-item p:nth-child(2)'); // Assuming it's the second <p> element
+                const ratingInfoText = ratingInfoElement ? ratingInfoElement.textContent.trim() : 'Rating: 0  |   # of Reviews: 0';
+
+                // Extract 'Avg_Rating' and 'Num_Ratings' from the text content
+                const avgRatingString = ratingInfoText.split('|')[0].replace('Rating:', '').trim();
+                const numRatingsString = ratingInfoText.split('|')[1].replace('# of Reviews:', '').trim();
+                
+                const avgRating = parseFloat(avgRatingString);
+                const numRatings = parseFloat(numRatingsString.replace(/,/g, '')); // Remove commas before parsing
+
+                const url = resultItem.querySelector('.details-section a').getAttribute('href');
+
+                book_data.push({
+                    Index: index + 1,
+                    Book: title,
+                    Author: author,
+                    Score: score,
+                    Avg_Rating: avgRating,
+                    Num_Ratings: numRatings,
+                    URL: url,
+                });
+            });
+            
+            // Perform an AJAX request to your Flask endpoint to send the email
+            fetch('/send_email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    book_title: book_title,
+                    book_data: book_data
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Email sent:', data);
+                // Add any additional handling or UI updates here
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+            });
+        }
+    </script>
+
+    {% if table %}
+        {% for row in table %}
+        <div class="result-item">
+            <div>
+                <p><strong>{{ loop.index }}. {{ row['Book'] }} by {{ row['Author'] }}</strong></p>
+                <p>Rating: {{ row['Avg_Rating'] }}  |   # of Reviews: {{ row['Num_Ratings'] }}</p>
+                <p class="details-button" onclick="toggleDetails(this)">Details ▼</p>
+                <div class="details-section">
+                    {% if row['Genres'] is defined %}
+                        <p>{{ row['Genres']|replace("[", "")|replace("]", "")|replace("'", "") }}</p>
+                    {% else %}
+                        <p>Genres: N/A</p>
+                    {% endif %}
+                    <p>{{ row['Descriptions'] }}</p>
+                    <p>URL: <a href="{{ row['URL'] }}" target="_blank">{{ row['URL'] }}</a></p>
+                </div>
+            </div>
+            <!-- Centered Similarity Score -->
+            <div class="similarity-score">
+                <p>Similarity Score:</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ row['Score Number'] }}%"></div>
+                </div>
+                <p>{{ row['Score'] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No similar books found.</p>
+    {% endif %}
+
+    <script>
+        function toggleDetails(button) {
+            const detailsSection = button.nextElementSibling;
+            detailsSection.style.display = detailsSection.style.display === 'none' ? 'block' : 'none';
+            button.textContent = detailsSection.style.display === 'none' ? 'Details ▼' : 'Details ▲';
+        }
+    </script>
+</body>
+</html>
