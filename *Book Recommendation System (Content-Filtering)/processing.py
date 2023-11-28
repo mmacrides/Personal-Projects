@@ -37,5 +37,5 @@ def filterPopularity(df, Mainstream = False, Niche = False, Hidden = False):
     return df
 
 def getAllBooks():
-    df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System/goodreads_data.csv")
+    df = pd.read_csv("goodreads_data.csv")
     return df['Book'].tolist()

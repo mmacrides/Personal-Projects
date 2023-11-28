@@ -4,7 +4,7 @@ import ast
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System/goodreads_data.csv")
+df = pd.read_csv("goodreads_data.csv")
 df.head(10)
 
 # Initialize the MultiLabelBinarizer
