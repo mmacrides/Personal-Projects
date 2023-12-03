@@ -22,13 +22,17 @@ Because this website is hosted locally, my friends aren't able to access this ap
 Below are my front-end screenshots:
 
 Landing/Main Page:
+
 <img width="765" alt="Screenshot 2023-12-03 at 10 35 56 AM" src="https://github.com/mmacrides/Personal-Projects/assets/67166143/461d7c55-1f8a-4069-8cfb-9129b8314550">
 
 Showing Top 10 Results for The Maze Runner:
+
 <img width="1015" alt="Screenshot 2023-12-03 at 10 38 15 AM" src="https://github.com/mmacrides/Personal-Projects/assets/67166143/9b964e1f-630e-40e5-911f-5b04567e9d7c">
 
 Using the Details dropdown:
+
 <img width="959" alt="Screenshot 2023-12-03 at 10 38 40 AM" src="https://github.com/mmacrides/Personal-Projects/assets/67166143/c95a130f-633c-4ef3-9cb9-54503ceeeb41">
 
 Email Sent with Results:
+
 <img width="483" alt="Screenshot 2023-12-03 at 10 39 28 AM" src="https://github.com/mmacrides/Personal-Projects/assets/67166143/353c7d12-31f8-43b2-adc0-07826ac0f2ae">
