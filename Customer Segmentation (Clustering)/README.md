@@ -3,6 +3,7 @@ Overview: Using text clustering method, K-means, to segment mall customers
 
 Three Dimensional:
 Initially, I created a 3-dimensional cluster with respect to age, annual income, and spending score. 
+
 <img width="316" alt="Screenshot 2023-12-03 at 8 24 52 AM" src="https://github.com/mmacrides/Personal-Projects/assets/67166143/4013933b-5a79-4489-a55d-c8c9f9dd85d5">
 
 After calclaating the averages per cluster, I was able to generalize clusters:
