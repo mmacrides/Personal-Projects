@@ -16,7 +16,7 @@ def format(df):
     return df
 
 def getMetadata(df):
-    metadata = pd.read_csv("goodreads_data.csv")
+    metadata = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
     metadata = metadata.rename(columns={'Description': 'Descriptions'})
     metadata = metadata[['Book', 'Descriptions', 'Genres', 'Author', 'Avg_Rating', 'Num_Ratings', 'URL']]
     df = pd.merge(df, metadata, on="Book", how="inner")
@@ -25,7 +25,7 @@ def getMetadata(df):
 def filterPopularity(df, Mainstream = False, Niche = False, Hidden = False):
     # All = All Books
     # Mainstream = Books with 50k+ reviews; Top 30%
-    # Fairly Popular = Books between 5k - 50k reviews; Top 65% - 30%
+    # Niche = Books between 5k - 50k reviews; Top 65% - 30%
     # Hidden = Books with less than 5k reviews; Bottom 35%
     if (Mainstream):
         df = df[df['Num_Ratings'] >= 50000]
@@ -37,5 +37,5 @@ def filterPopularity(df, Mainstream = False, Niche = False, Hidden = False):
     return df
 
 def getAllBooks():
-    df = pd.read_csv("goodreads_data.csv")
+    df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
     return df['Book'].tolist()

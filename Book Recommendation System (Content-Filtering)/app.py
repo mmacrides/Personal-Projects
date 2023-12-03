@@ -86,7 +86,7 @@ def send_email_route():
         print('Top 10 Similar Books:', top_10_similar_books)
         print('Book Title:', book_title)
         
-        send_email(email, book_title, top_10_similar_books)  # Adjust this line based on your needs
+        send_email(email, book_title, top_10_similar_books)
         return jsonify({'message': 'Email sent successfully'})
     except Exception as e:
         return jsonify({'error': str(e)})

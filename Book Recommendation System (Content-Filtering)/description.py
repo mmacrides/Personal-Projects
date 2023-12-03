@@ -4,7 +4,7 @@ import ast
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-df = pd.read_csv("goodreads_data.csv")
+df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
 df.head(10)
 
 # Initialize the MultiLabelBinarizer
@@ -36,7 +36,7 @@ def getAuthor(book_title):
     return selected_author
 
 def similar_descriptions(book_title):
-    if book_title in pd.read_csv("goodreads_data.csv")['Book'].values:
+    if book_title in pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")['Book'].values:
         book_index = df[df['Book'] == book_title].index[0]
         
         # Calculate similarity percentages for description
