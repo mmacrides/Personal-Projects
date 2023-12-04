@@ -1,11 +1,13 @@
 import pandas as pd
 
+# Scoring function
 def score(df, genre_weight=0.2, title_weight=0.1, description_weight=0.7):
     df['Score'] = (genre_weight * df['Genre']) + (title_weight * df['Title']) + (description_weight * df['Description'])
     # Convert the decimal score to percentage with one decimal place
     df['Score'] = (df['Score'] * 100).round(1)
     return df
 
+# Formatting dataframe
 def format(df):
     col = df.pop('Score')
     df.insert(1, col.name, col)
@@ -15,6 +17,7 @@ def format(df):
     df['Score'] = df['Score'].astype(str) + '%'
     return df
 
+# Attaching metadata back onto fataframe
 def getMetadata(df):
     metadata = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
     metadata = metadata.rename(columns={'Description': 'Descriptions'})

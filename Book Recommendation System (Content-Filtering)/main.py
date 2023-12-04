@@ -3,6 +3,7 @@ from title import similar_titles
 from description import similar_descriptions
 import pandas as pd
 
+### This file was created before app.py and Flask integration. Ignore ###
 
 #book_title = 'The Maze Runner (Maze Runner, #1)'
 book_title = 'Legend (Legend, #1)'

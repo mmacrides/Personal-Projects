@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587  # Use the appropriate port for your mail server
+app.config['MAIL_PORT'] = 587 
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'mattmacrides@gmail.com'
@@ -22,38 +22,42 @@ mail = configure_mail(app)
 
 def score(df, genre_weight, title_weight, description_weight):
     df['Score'] = (genre_weight * df['Genre']) + (title_weight * df['Title']) + (description_weight * df['Description'])
-    # Convert the decimal score to percentage with one decimal place
     df['Score'] = (df['Score'] * 100).round(1)
     return df
 
 def get10Books(book_title, genre_weight, title_weight, description_weight, excludeAuthor=False, mainstream = False, niche = False, hidden = False):
+    # Retrieve similarity data
     booksGenre = similar_genres(book_title)
     booksTitle = similar_titles(book_title)
     booksDescription = similar_descriptions(book_title)
     if booksTitle.empty:
         return pd.DataFrame()
     else:
+        # Merge similarity data and add metadata columns back into dataset
         df = pd.merge(booksGenre, booksTitle, on="Book", how="inner")
         df = pd.merge(df, booksDescription, on="Book", how="inner")
         df = getMetadata(df)
-        if excludeAuthor:
         # Filter out books from the same author
-            # Exclude books from the same author
+        if excludeAuthor:
             selectedAuthor = getAuthor(book_title)
             df = df[df['Author'] != selectedAuthor]
+        # Filter popularity functionality
         df = filterPopularity(df, mainstream, niche, hidden)
         print(mainstream)
+        # Score and format data set
         df = score(df, genre_weight, title_weight, description_weight)
         df = format(df)
         selected_columns = ['Book', 'Score', 'Score Number', 'Descriptions', 'Genres', 'Author', 'Avg_Rating', 'Num_Ratings', 'URL']
         df = df[selected_columns]
         df = df.drop_duplicates(subset=['Book', 'Author'])
         df = df.head(10)
-        return df.to_dict(orient='records')  # Convert DataFrame to list of dictionaries
+        # Convert DataFrame to list of dictionaries
+        return df.to_dict(orient='records')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
+        # Get weights from UI
         book_title = request.form['book_title']
         genre_weight = float(request.form.get('genre_weight'))
         title_weight = float(request.form.get('title_weight'))

@@ -31,6 +31,7 @@ df = pd.concat([df, desc_df], axis=1)
 # Calculate the cosine similarity based on description data
 description_sim_matrix = cosine_similarity(desc_df)
 
+# Get author from book. Used for exclude author filter
 def getAuthor(book_title):
     selected_author = df.loc[df['Book'] == book_title, 'Author'].values[0]
     return selected_author
