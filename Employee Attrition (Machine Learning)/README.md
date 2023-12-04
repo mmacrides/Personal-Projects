@@ -1,2 +1,2 @@
 # Personal-Projects
-Please see powerpoint file for in-depth analysis.
+Please see powerpoint file for documentation and analysis.
