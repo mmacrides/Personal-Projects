@@ -46,6 +46,28 @@
             margin-bottom: 16px;
         }
 
+        .info-icon-container {
+            position: absolute;
+            padding: 5px;
+            top: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-icon {
+            width: 20px;
+            height: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
         label1 {
             display: block;
             margin-bottom: 8px;
@@ -77,11 +99,13 @@
         .weights-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            position: relative;
+            margin-bottom: 20px;
             width: 60%;
             column-gap: 40px;
             background-color: #f0f0f0; /* Darker background color */
-            padding: 15px; /* Add padding for a shaded border effect */
+            padding: 20px; /* Add padding for a shaded border effect */
+            padding-bottom: 5px;
             border: 1px solid #ccc; /* Shaded border */
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -151,12 +175,12 @@
 
         
         <div class="input-container" style="display: flex; flex-direction: row; align-items: center; margin-bottom: 16px;">
-            <div class="selection-box" style="margin-right: 5px;">
+            <div class="selection-box" id="book_visibility" style="margin-right: 5px;">
                 <label1 style="margin-right: 8px; font-size: 15px;"></label1>
                 <div class="selection-option selected" style="font-size: 15px" onclick="toggleSelection(this)" name="book_visibilityAll">All</div>
                 <div class="selection-option" style="font-size: 15px" onclick="toggleSelection(this)" name="book_visibilityMainstream">Mainstream</div>
                 <div class="selection-option" style="font-size: 15px" onclick="toggleSelection(this)" name="book_visibilityNiche">Niche</div>
-                <div class="selection-option" style="font-size: 15px" onclick="toggleSelection(this)" name="book_visibilityHidden">Hidden</div>                
+                <div class="selection-option" style="font-size: 15px" onclick="toggleSelection(this)" name="book_visibilityHidden">Hidden</div>   
             </div>
             <label1 for="exclude_author" style="font-size: 15px; display: flex; align-items: center; margin-right: 50px; white-space: nowrap;">
                 Exclude Same Author:    
@@ -164,8 +188,11 @@
             </label1>
         </div>
         
+        <!-- Add this hidden input field within your form -->
+       <input type="hidden" name="selected_visibility" id="selected_visibility" value="">
+        
 
-        <div class="weights-container" style="height: 80px;">
+        <div class="weights-container">
             <div class="input-container">
                 <label2 for="genre_weight" style="font-size: 16px;">Genre</label2>
                 <input type="text" id="genre_weight" name="genre_weight" value="0.20" required>
@@ -180,7 +207,12 @@
                 <label2 for="description_weight" style="font-size: 16px;">Description</label2>
                 <input type="text" id="description_weight" name="description_weight" value="0.70" required>
             </div>
+
+            <div class="info-icon-container">
+                <div class="info-icon" onclick="showInfo('The similarity score is calculated based on genre, title, and description. Please adjust these weights accordingly if you want to favor a specific feature for calculating similarity score. The weights should add up to 1. Happy searching!')">i</div>
+            </div>
         </div>
+
     
         <button type="submit">Search</button>
     </form>
@@ -188,13 +220,22 @@
         Developed by Matt Macrides
     </footer>
     <script>
+        function showInfo(message) {
+            alert(message);
+        }
+    </script>
+    <script>
         function toggleSelection(element) {
             const allOptions = document.querySelectorAll('.selection-option');
             allOptions.forEach(option => option.classList.remove('selected'));
             element.classList.add('selected');
             const visibilityValue = element.getAttribute('name').replace('book_visibility', '');
+            document.getElementsByTagName('book_visibility').value = 'book_visibility' + visibilityValue;
+            console.log(element)
+
+            document.getElementById('selected_visibility').value = visibilityValue;
+
             console.log('Visibility Value:', visibilityValue);
-            document.getElementsByName('book_visibility').value = visibilityValue;
         }
     </script>
 </body>

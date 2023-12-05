@@ -43,7 +43,6 @@ def get10Books(book_title, genre_weight, title_weight, description_weight, exclu
             df = df[df['Author'] != selectedAuthor]
         # Filter popularity functionality
         df = filterPopularity(df, mainstream, niche, hidden)
-        print(mainstream)
         # Score and format data set
         df = score(df, genre_weight, title_weight, description_weight)
         df = format(df)
@@ -64,12 +63,12 @@ def index():
         description_weight = float(request.form.get('description_weight'))
         # Get the status of the 'exclude_author' checkbox
         excludeAuthor = 'exclude_author' in request.form
-        mainstream = 'book_visibilityMainstream' in request.form
-        #mainstream = request.form.get('book_visibilityMainstream')
-        niche = request.form.get('book_visibilityNiche')
-        hidden = request.form.get('book_visibilityHidden')
+        mainstream = niche = hidden = False
+        selected_visibility = request.form.get('selected_visibility')
+        if selected_visibility == 'Mainstream': mainstream = True
+        if selected_visibility == 'Niche': niche = True
+        if selected_visibility == 'Hidden': hidden = True
         print('Form Data:', request.form)
-
         top_10_similar_books = get10Books(book_title, genre_weight, title_weight, description_weight, excludeAuthor, mainstream, niche, hidden)
         script = f"<script>var book_title = '{book_title}';</script>"
         return render_template('result.html', table=top_10_similar_books, email_data=top_10_similar_books, script=script)

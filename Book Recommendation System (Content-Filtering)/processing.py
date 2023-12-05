@@ -30,13 +30,18 @@ def filterPopularity(df, Mainstream = False, Niche = False, Hidden = False):
     # Mainstream = Books with 50k+ reviews; Top 30%
     # Niche = Books between 5k - 50k reviews; Top 65% - 30%
     # Hidden = Books with less than 5k reviews; Bottom 35%
-    if (Mainstream):
+    df['Num_Ratings'] = pd.to_numeric(df['Num_Ratings'].str.replace(',', ''), errors='coerce')
+    if Mainstream:
+        print('mainstream')
         df = df[df['Num_Ratings'] >= 50000]
-    if (Niche):
-        df = df[df['Num_Ratings'] < 50000]
-        df = df[df['Num_Ratings'] >= 5000]
-    if(Hidden):
+    elif Niche:
+        print('niche')
+        df = df[(df['Num_Ratings'] < 50000) & (df['Num_Ratings'] >= 5000)]
+    elif Hidden:
+        print('hidden')
         df = df[df['Num_Ratings'] < 5000]
+    
+    df['Num_Ratings'] = df['Num_Ratings'].map('{:,}'.format)
     return df
 
 def getAllBooks():
