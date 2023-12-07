@@ -20,12 +20,7 @@ app.config['MAIL_DEFAULT_SENDER'] = 'mattmacrides@gmail.com'
 # Configure mail with the app
 mail = configure_mail(app)
 
-def score(df, genre_weight, title_weight, description_weight):
-    df['Score'] = (genre_weight * df['Genre']) + (title_weight * df['Title']) + (description_weight * df['Description'])
-    df['Score'] = (df['Score'] * 100).round(1)
-    return df
-
-def get10Books(book_title, genre_weight, title_weight, description_weight, excludeAuthor=False, mainstream = False, niche = False, hidden = False):
+def get10Books(book_title, genre_weight, title_weight, description_weight, excludeAuthor = False, mainstream = False, niche = False, hidden = False):
     # Retrieve similarity data
     booksGenre = similar_genres(book_title)
     booksTitle = similar_titles(book_title)
@@ -46,8 +41,7 @@ def get10Books(book_title, genre_weight, title_weight, description_weight, exclu
         # Score and format data set
         df = score(df, genre_weight, title_weight, description_weight)
         df = format(df)
-        selected_columns = ['Book', 'Score', 'Score Number', 'Descriptions', 'Genres', 'Author', 'Avg_Rating', 'Num_Ratings', 'URL']
-        df = df[selected_columns]
+        df = df[['Book', 'Score', 'Score Number', 'Descriptions', 'Genres', 'Author', 'Avg_Rating', 'Num_Ratings', 'URL']]
         df = df.drop_duplicates(subset=['Book', 'Author'])
         df = df.head(10)
         # Convert DataFrame to list of dictionaries

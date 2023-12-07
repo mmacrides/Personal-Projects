@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
-import ast
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from nltk.corpus import stopwords
 
 df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
 df.head(10)
@@ -14,7 +14,7 @@ mlb = MultiLabelBinarizer()
 df['Description'].fillna('', inplace=True)
 
 # Initialize the TF-IDF vectorizer
-tfidf_vectorizer = TfidfVectorizer(max_features=1000)  # You can adjust the number of features as needed
+tfidf_vectorizer = TfidfVectorizer()  # You can adjust the number of features as needed
 
 # Fit and transform the book descriptions
 tfidf_matrix = tfidf_vectorizer.fit_transform(df['Description'])
@@ -24,6 +24,23 @@ feature_names = tfidf_vectorizer.get_feature_names_out()
 
 # Create a DataFrame from the TF-IDF matrix
 desc_df = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)
+
+# DECIDED NOT TO REMOVE STOP WORDS: https://opensourceconnections.com/blog/2023/01/24/10-reasons-why-you-shouldnt-remove-stop-words/
+# Iterate over columns and remove columns consisting of stop words
+#nltk.download('stopwords')
+#stop_words = set(word.lower() for word in stopwords.words('english'))
+
+# Create a list to store columns to drop
+#columns_to_drop = []
+
+# Iterate over columns and identify columns to drop
+#for col in desc_df.columns:
+    #if all(word.lower() in stop_words for word in col.split()):
+        #columns_to_drop.append(col)
+        #print(f"Dropping column: {col}")
+
+# Drop identified columns
+#desc_df.drop(columns=columns_to_drop, inplace=True)
 
 # Concatenate the new DataFrame with the original one
 df = pd.concat([df, desc_df], axis=1)
