@@ -5,7 +5,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from nltk.corpus import stopwords
 import nltk
 
-df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
+path = ("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/Data/goodreads_data.csv")
+df = pd.read_csv(path)
 df.head(10)
 
 # Initialize the MultiLabelBinarizer
@@ -50,7 +51,7 @@ df = pd.concat([df, book_df], axis=1)
 book_sim_matrix = cosine_similarity(book_df)
 
 def similar_titles(book_title):
-    if book_title in pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")['Book'].values:
+    if book_title in pd.read_csv(path)['Book'].values:
         book_index = df[df['Book'] == book_title].index[0]
         
         # Calculate similarity percentages for description

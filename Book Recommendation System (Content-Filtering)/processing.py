@@ -1,5 +1,7 @@
 import pandas as pd
 
+path = ("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/Data/goodreads_data.csv")
+
 # Scoring function
 def score(df, genre_weight=0.2, title_weight=0.1, description_weight=0.7):
     df['Score'] = (genre_weight * df['Genre']) + (title_weight * df['Title']) + (description_weight * df['Description'])
@@ -19,7 +21,7 @@ def format(df):
 
 # Attaching metadata back onto fataframe
 def getMetadata(df):
-    metadata = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
+    metadata = pd.read_csv(path)
     metadata = metadata.rename(columns={'Description': 'Descriptions'})
     metadata = metadata[['Book', 'Descriptions', 'Genres', 'Author', 'Avg_Rating', 'Num_Ratings', 'URL']]
     df = pd.merge(df, metadata, on="Book", how="inner")
@@ -45,5 +47,5 @@ def filterPopularity(df, Mainstream = False, Niche = False, Hidden = False):
     return df
 
 def getAllBooks():
-    df = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/goodreads_data.csv")
+    df = pd.read_csv(path)
     return df['Book'].tolist()

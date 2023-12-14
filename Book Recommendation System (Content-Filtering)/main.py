@@ -5,6 +5,8 @@ import pandas as pd
 
 ### This file was created before app.py and Flask integration. Ignore ###
 
+path = ("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/Data/goodreads_data.csv")
+
 #book_title = 'The Maze Runner (Maze Runner, #1)'
 book_title = 'Legend (Legend, #1)'
 
@@ -31,7 +33,7 @@ def format(df):
     return df
 
 def getMetadata(df):
-    metadata = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System/goodreads_data.csv")
+    metadata = pd.read_csv(path)
     metadata = metadata[['Book', 'Genres', 'Author', 'Avg_Rating', 'Num_Ratings', 'URL']]
     df = pd.merge(df, metadata, on="Book", how="inner")
     return df
