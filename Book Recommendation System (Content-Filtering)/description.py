@@ -26,6 +26,23 @@ feature_names = tfidf_vectorizer.get_feature_names_out()
 # Create a DataFrame from the TF-IDF matrix
 desc_df = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)
 
+# Dropping name columns
+names = pd.read_csv("/Users/mattmacrides/Personal-Projects/Book Recommendation System (Content-Filtering)/Data/Names.csv")
+names = set(names['Name'].str.lower().tolist())
+names
+
+# Create a list to store columns to drop
+columns_to_drop = []
+
+# Iterate over columns and identify columns to drop
+for col in desc_df.columns:
+    if col.lower() in names:
+        columns_to_drop.append(col)
+        #print(f"Dropping column: {col}")
+
+# Drop names columns
+desc_df.drop(columns=columns_to_drop, inplace=True)
+
 # DECIDED NOT TO REMOVE STOP WORDS: https://opensourceconnections.com/blog/2023/01/24/10-reasons-why-you-shouldnt-remove-stop-words/
 # Iterate over columns and remove columns consisting of stop words
 #nltk.download('stopwords')
