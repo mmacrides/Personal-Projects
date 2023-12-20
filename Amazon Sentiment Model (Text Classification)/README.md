@@ -4,14 +4,6 @@
 We provide you a tool to give instant sentiment analysis on the submitted review regarding the sentiment levels (Positive, Negative or Neutral).
 A marketing or product research personel or department can integrate this tool to develop a batch processing feature that intakes a dataset of reviews and outputs a corresponding list of sentiments. Based on how they analyze this output, it can be beneficial to investigate the overall trend, the outliers, or interesting observation, for further improvements or other decision on the products/services.
 
-**Video Demo Presentation:** https://youtu.be/76HLnHLKslo
-
-### Project team
-- Ethan Shen: ethans11@illinois.edu
-- Matt Macrides: mbm12@illinois.edu
-- Ajay Ramsunder: ajayr4@illinois.edu
-- Huyen Lai: hlai9@illinois.edu
-
 ## Background/Problem Statement:
 - Technical errors or user mistakes can lead to reviews not matching the ratings given on a product/service.
 - Sentimental analysis model can be time consuming to build, and getting proper dataset to train the model can be challenging.
@@ -116,11 +108,11 @@ A marketing or product research personel or department can integrate this tool t
 - We later utilized this combined of initial data and extra data, for a total of 8,000 reviews used for our sentiment model.
 
 ### Implementation 
-- *Huyen* initiated the data preprocessing, vectorization, language model setup and model building by researching and experimenting with different models including multinomial Naive Bayes and linear models, including logistic regression, on different packages including nltk and sklearn, and some trial unigram and bigram vectorization. She finished a preliminary set of results which revealed an issue of data heavily skewed on positive sentiments. This resulted in high precision and recall for skewed category (Positive) but very low for the other two categories (Negative and Neutral). The team gave individual feedbacks on this and proposed different resolutions.
+- *Matt* initiated the data preprocessing, vectorization, language model setup and model building by researching and experimenting with different models including multinomial Naive Bayes and linear models, including logistic regression, on different packages including nltk and sklearn, and some trial unigram and bigram vectorization. She finished a preliminary set of results which revealed an issue of data heavily skewed on positive sentiments. This resulted in high precision and recall for skewed category (Positive) but very low for the other two categories (Negative and Neutral). The team gave individual feedbacks on this and proposed different resolutions.
 - *Ethan* took up the next part of model building and tuning. Firstly he explored some resolutions for this skewed data issue: by generating more data while eliminating some positive reviews to balance out data in all categories. Another solution tested was to oversample the underrepresented categories based off proper IDF approach, which proves quite effective for our purpose. He also added XGBoost model to the list of models to explore in this exercise. He retrained and re-evaluated all the models on the newly updated data. He studied the evaluation results and shared his thoughts with the team, who all discussed the score and how to proceed next. He then made the final decision on using XGBoost model and its object for the backend for our next UI step.
 
 ### UI Application 
-- *Ajay* built a frontend component in ReactJS that allows a user to manually feed in any review and then submit the review to be analyzed by the model. He then built a backend using Flask that allowed for the comment from the frontend to be passed through and analyzed and then the response to be sent back to the frontend. Details as follows:
+- *Ajay and Huyen* built a frontend component in ReactJS that allows a user to manually feed in any review and then submit the review to be analyzed by the model. He then built a backend using Flask that allowed for the comment from the frontend to be passed through and analyzed and then the response to be sent back to the frontend. Details as follows:
 
 #### Frontend Components 
 - Form: The form allows a user to submit the review and is the container for the different components on the page
