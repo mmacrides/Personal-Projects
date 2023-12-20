@@ -2,7 +2,7 @@
 *This is the final course project for **CS 410 - Text Retrieval & Mining** course at the University of Illinois at Urbana-Champaign. - Fall 2023*
 
 We provide you a tool to give instant sentiment analysis on the submitted review regarding the sentiment levels (Positive, Negative or Neutral).
-A marketing or product research personel or department can integrate this tool to develop a batch processing feature that intakes a dataset of reviews and outputs a corresponding list of sentiments. Based on how they analyze this output, it can be beneficial to investigate the overall trend, the outliers, or interesting observation, for further improvements or other decision on the products/services.
+A marketing or product research personel or department can integrate this tool to take in reviews and outputsentiment. Based on how they analyze this output, it can be beneficial to investigate the overall trend, the outliers, or interesting observation, for further improvements or other decision on the products/services.
 
 ## Background/Problem Statement:
 - Technical errors or user mistakes can lead to reviews not matching the ratings given on a product/service.
